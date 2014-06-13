@@ -169,103 +169,103 @@ function [] = trafficCameraDistractedDriverDetection(backgroundFrame, framesToPr
 			
 			%%%%%BEGIN DELTA CALCULATOR%%%%%			
 	
-if y >= 2
+		if y >= 2
 	
-		%check if this is initial run to load previous frame
-		if y == 2
+			%check if this is initial run to load previous frame
+			if y == 2
 			
-			%tmp message for debugging
-			wentintointial = 'went into initial';
+				%tmp message for debugging
+				wentintointial = 'went into initial';
 			
-			%create another variable that can be manipulated with effecting loop counter
-			V = y - 1;
+				%create another variable that can be manipulated with effecting loop counter
+				V = y - 1;
 		
-			%convert V to a string so that it works in 'load'
-			V = num2str(V);
+				%convert V to a string so that it works in 'load'
+				V = num2str(V);
 			
-			%create string to calculate name of file
-			N = strcat(V, 'matrix');
+				%create string to calculate name of file
+				N = strcat(V, 'matrix');
 		
-			%read in the contents of the previous vector from the file
-			prev_tmp = load(N);
+				%read in the contents of the previous vector from the file
+				prev_tmp = load(N);
 			
-			%convert i to string so that it works in 'load'
-			V = num2str(y);
+				%convert i to string so that it works in 'load'
+				V = num2str(y);
 			
-			%create string to calculate name of file
-			N = strcat(V, 'matrix');
+				%create string to calculate name of file
+				N = strcat(V, 'matrix');
 			
-			%read in the contents of the current vector from the file
-			tmp = load(N);
+				%read in the contents of the current vector from the file
+				tmp = load(N);
 		
-		%for all the other normal times that the algorithm is used
-		else 		
+			%for all the other normal times that the algorithm is used
+			else 		
 		
-			%tmp message for debugging
-			wentintodebug = 'went into else statement should see this multiple times';
+				%tmp message for debugging
+				wentintodebug = 'went into else statement should see this multiple times';
 			
-			%loading current tmp file into prev_tmp 
-			%so that it can be compared with the next 
-			prev_tmp = tmp;
+				%loading current tmp file into prev_tmp 
+				%so that it can be compared with the next 
+				prev_tmp = tmp;
 		
-			%convert V to a string so that it works in load
-			V = num2str(y);
+				%convert V to a string so that it works in load
+				V = num2str(y);
 		
-			%create string to calculate name of file
-			N = strcat(V, 'matrix');
+				%create string to calculate name of file
+				N = strcat(V, 'matrix');
 		
-			%read in the contents of the current vector from the file
-			tmp = load(N);
+				%read in the contents of the current vector from the file
+				tmp = load(N);
 		
-		endif; 
+			endif; 
 		
-		%finding the size of the vector 
-		St = size(tmp);
-		Sp = size(prev_tmp);
+			%finding the size of the vector 
+			St = size(tmp);
+			Sp = size(prev_tmp);
 	
-		%if statement to skip correction step if both vectors are same size
-		if St != Sp
+			%if statement to skip correction step if both vectors are same size
+			if St != Sp
 		
-			%tmp message for debugging
-			wentintolengthcorrector = 'went into length corrector';
+				%tmp message for debugging
+				wentintolengthcorrector = 'went into length corrector';
 			
-			% correct the length difference
-			Stmp = St - Sp
+				% correct the length difference
+				Stmp = St - Sp
 			
-			%create a switch to determine how to correct for size difference
-			switch (Stmp)
+				%create a switch to determine how to correct for size difference
+				switch (Stmp)
 						
-				%if only one new car has been added, 
-				%calculate which coordinates are the new car 
-				case Stmp == 2
+					%if only one new car has been added, 
+					%calculate which coordinates are the new car 
+					case Stmp == 2
 				
-					%tmp message for debugging
-					wentintocasetwo = 'went into case number 2';
+						%tmp message for debugging
+						wentintocasetwo = 'went into case number 2';
 					
-					%calculate size of the large matrix to be able to step through it.
-					if (St > Sp)
-						
-										
-						%setting X to equal smaller vector to not throw an error
-						S = Sp;
-						
-						%setting vector to equal size of larger one 
-						SL = St; 
-												
-					else 
-						
-						V = 1; 
-						
-						%setting X to equal smaller vector to not throw an error
-						S = St;
-						
-						%setting vector to equal size of larger one 
-						SL = Sp; 
-												
-					endif
+							%calculate size of the large matrix to be able to step through it.
+						if (St > Sp)
+							
+											
+							%setting X to equal smaller vector to not throw an error
+							S = Sp;
+							
+							%setting vector to equal size of larger one 
+							SL = St; 
+													
+						else 
+							
+							V = 1; 
+							
+							%setting X to equal smaller vector to not throw an error
+							S = St;
+							
+							%setting vector to equal size of larger one 
+							SL = Sp; 
+													
+						endif
 				
-			%breaking the switch since it is already ready to go to the next step
-			endswitch 
+				%breaking the switch since it is already ready to go to the next step
+				endswitch 
 												
 				%analysing the length of the coordinate vector
 				for a = 2:S
@@ -292,87 +292,83 @@ if y >= 2
 					endif
 						
 				end 
-		else 
+			
+			else 
 			
 			%set current tmp value to equal delta current to keep nomenclature the same 
 			deltacurrent = tmp; 
 			%set S to equal length of one of the vector of coordinates
 			S = St(2); 
 								
-		endif
+			endif
 		
-		%now all of the vectors are lined up, delta calculations can be done 
-		for x = 1:S
-						
-			%cell by cell delta calculation here 
-			delta_tmp(x) = prev_tmp(x) - deltacurrent(x);
-			
-			%eventually have if statement here to evaluate if there is an anomaly 
-			%if so, save the 'a' value as it will probably come back
-			
-		end 
-		
-		%if there is no movement in the entire frame
-			
-		if sum(delta_tmp) == 0
-			%throw out the values for this matrix 
-			%waste time
-			wastetime = 'true';
-			
-			%N = strcat(V, 'delta_pos'); 
-			
-			%delta_pos_mean = 'placeholder';
-			
-			%save the matrix as a file
-			%dlmwrite(N, delta_pos_mean);
-		
-			%delta_neg_mean = 'placeholder'; 
-			
-			%N = strcat(V, 'delta_neg');
-			
-			%save the matrix as a file
-			%dlmwrite(N, delta_neg_mean);
-			
-		%putting final delta vector calculations to only happen if movement occurred 	
-		else 
+			%now all of the vectors are lined up, delta calculations can be done 
+			for x = 1:S
 							
-			%save all positive delta values in one matrix, i.e, all traffic moving in one direction 
-			delta_pos_sorted = delta_tmp(delta_tmp > 0);
+				%cell by cell delta calculation here 
+				delta_tmp(x) = prev_tmp(x) - deltacurrent(x);
+				
+				%eventually have if statement here to evaluate if there is an anomaly 
+				%if so, save the 'a' value as it will probably come back
+				
+			end 
+			
+			%if there is no movement in the entire frame
+				
+			if sum(delta_tmp) == 0
+				%throw out the values for this matrix 
+				%waste time
+				wastetime = 'true';
+				
+				%N = strcat(V, 'delta_pos'); 
+				
+				%delta_pos_mean = 'placeholder';
+				
+				%save the matrix as a file
+				%dlmwrite(N, delta_pos_mean);
+			
+				%delta_neg_mean = 'placeholder'; 
+				
+				%N = strcat(V, 'delta_neg');
+				
+				%save the matrix as a file
+				%dlmwrite(N, delta_neg_mean);
+				
+			%putting final delta vector calculations to only happen if movement occurred 	
+			else 
+								
+				%save all positive delta values in one matrix, i.e, all traffic moving in one direction 
+				delta_pos_sorted = delta_tmp(delta_tmp > 0);
+			
+				%save all positive delta values in one matrix, i.e, all traffic moving in one direction 
+				delta_neg_sorted = delta_tmp(delta_tmp < 0);
+			
+				%MEAN DELTA CALCULATION HERE & saving to a vector of all deltas
+				delta_pos_mean = mean(delta_pos_sorted);
+				%create string name for file that matrix will be saved in 
+				
+				%n = num2str(i) 
+				
+				N = strcat(V, 'delta_pos'); 
+				
+				%save the matrix as a file
+				dlmwrite(N, delta_pos_mean);
+			
+				delta_neg_mean = mean(delta_neg_sorted);
+				
+				N = strcat(V, 'delta_neg');
+				
+				%save the matrix as a file
+				dlmwrite(N, delta_neg_mean);
+				
+				%reset vectors for next run, must be done to fix length changes
+				delta_tmp = [0 0];
+				prev_tmp = [0 0];
+				deltacurrent = [0 0];
+				
+			endif;
 		
-			%save all positive delta values in one matrix, i.e, all traffic moving in one direction 
-			delta_neg_sorted = delta_tmp(delta_tmp < 0);
-		
-			%MEAN DELTA CALCULATION HERE & saving to a vector of all deltas
-			delta_pos_mean = mean(delta_pos_sorted);
-			%create string name for file that matrix will be saved in 
-			
-			%n = num2str(i) 
-			
-			N = strcat(V, 'delta_pos'); 
-			
-			%save the matrix as a file
-			dlmwrite(N, delta_pos_mean);
-		
-			delta_neg_mean = mean(delta_neg_sorted);
-			
-			N = strcat(V, 'delta_neg');
-			
-			%save the matrix as a file
-			dlmwrite(N, delta_neg_mean);
-			
-			%reset vectors for next run, must be done to fix length changes
-			delta_tmp = [0 0];
-			prev_tmp = [0 0];
-			deltacurrent = [0 0];
-			
 		endif;
-		
-		if (y < 2) 
-		
-			%do nothing and go back to start
-			blah = 'blah';
-	
-		endif; 
 	
 	end;
 		
