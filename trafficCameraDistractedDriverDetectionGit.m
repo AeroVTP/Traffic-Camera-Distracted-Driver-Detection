@@ -1,5 +1,7 @@
 %Traffic Camera Distracted Driver Detection Algorithm 
 %
+%TCD^3
+%
 %This algorithm uses several image processing algorithms and techniques: 
 %Convolution for blurring, Gaussian Bell Curve for blurring, 
 %Morphology Techniques: Dilation and Erosion, and Region Props Blob Detection
